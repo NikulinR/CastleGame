@@ -18,22 +18,32 @@ class Field():
         
         for i in range(height):
             tmp = []
-            for j in range(width):
-                  tmp.append(Figure(i, j, random.choice(self.list_color), True))
+            for j in range(width):                
+                tmp.append(Figure(i, j, random.choice(self.list_color), False))
             self.list_field.append(tmp)
             
             
     def DeleteShape(self):
-        tmp = []
+        delindex = []
         for i in range(self.height):
+            linedels = []
             for j in range(self.width):
                 if self.list_field[i][j].choisen == True:
-                    tmp.append([i,j])
-        for i in range(len(tmp)):
-            for j in range(len(self.list_field[tmp[i][0]]), 0, -1):
-                print(i, j)
-                if j == tmp[i][1]:
-                    del self.list_field[tmp[i][0]][j]
+                    linedels.append(j)
+            delindex.append([i, linedels])
+                    
+        for dind in delindex:
+            tmpstr = []
+            dels = 0
+            for j in range(len(self.list_field[dind[0]])):
+                if j not in dind[1]:                    
+                    tmpstr.append(self.list_field[dind[0]][j])
+                else:
+                    dels+=1
+            self.list_field[dind[0]] = tmpstr
+            for i in range(dels):
+                self.list_field[dind[0]].append(Figure(i, j, random.choice(self.list_color), False))
+            
                     
         self.height = len(self.list_field)
         if self.height > 0: 
@@ -56,8 +66,10 @@ class Field():
         print(string_color)
                 
 pole = Field(5,5)
+pole.OutConsole()
 pole.DeleteShape()
 pole.OutConsole()
+
 
     
 #def ChoisenUnit():
