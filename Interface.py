@@ -17,6 +17,9 @@ class mainForm(QMainWindow, FormGame.Ui_MainWindow):
         self.tmppixframe = QPixmap(self.frame.width(),self.frame.height())
         self.field = None
         self.moved = False
+        ##############
+        self.tmp_array = [] 
+        ##############
     
     def buttonRun_Clicked(self):
         self.field = CastleGame.Field(random.randint(10, 20), random.randint(10, 20))
@@ -56,8 +59,46 @@ class mainForm(QMainWindow, FormGame.Ui_MainWindow):
                     p.fillRect(rect, QColor(255,0,0))
                 if self.field.list_field[i][j].color == QColor.blue:
                     p.fillRect(rect, QColor(0,0,255))
+                if self.field.list_field[i][j].choisen:
+                    p.fillRect(rect, QColor(0,255,255))
                 p.drawRect(rect)
                 
+             
+    def mousePressEvent(self, e):
+        if (self.frame.x() < e.x() < self.frame.x()+self.frame.width()) & (self.frame.y() < e.y() < self.frame.y()+self.frame.height()):   
+            i = int((e.x() - self.frame.x())//(self.frame.width()/len(self.field.list_field[0])))
+            j = int((e.y() - self.frame.y())//(self.frame.height()/len(self.field.list_field)))   
+            
+            self.tmp_array = [j, i]
+            ##############
+            if not self.field.list_field[j][i].choisen:
+                self.field.ChoisenUnit(j, i)   
+            ##############
+        self.update()
+    
+    def mouseMoveEvent(self, e):
+        if (self.frame.x() < e.x() < self.frame.x()+self.frame.width()) & (self.frame.y() < e.y() < self.frame.y()+self.frame.height()):   
+            i = int((e.x() - self.frame.x())//(self.frame.width()/len(self.field.list_field[0])))
+            j = int((e.y() - self.frame.y())//(self.frame.height()/len(self.field.list_field))) 
+            
+            for neig in CastleGame.Field.GetNeighbourhood(self.tmp_array[0], self.tmp_array[1], self.field.list_field):
+                ###################
+                if self.field.list_field[j][i] == neig:
+                    ###############
+                    if self.field.list_field[j][i].color == self.field.list_field[self.tmp_array[0]][self.tmp_array[1]].color and not self.field.list_field[j][i].choisen:
+                        self.field.ChoisenUnit(j, i) 
+            ######################
+                        self.tmp_array = [j, i]
+                        break
+            #####################
+            self.update()
+        
+    def mouseReleaseEvent(self, e):
+        self.field.DeleteShape()
+        self.field.EndGame()
+        self.label.setText("AAAAA")
+        self.labelScore.setText(str(self.field.score))
+        self.update()     
         
 if __name__ == '__main__':
     app = QApplication(sys.argv)

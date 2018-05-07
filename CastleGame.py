@@ -33,7 +33,8 @@ class Field():
             self.list_field.append(tmp)
             
     def ChoisenUnit(self, i, j):
-        self.list_field[i][j].choisen = True    
+        if self.list_field[i][j].color != QColor.blue:
+            self.list_field[i][j].choisen = True    
                         
     def DeleteShape(self):
         delindex = []
@@ -84,16 +85,15 @@ class Field():
         
     @staticmethod
     def GetNeighbourhood(i, j, list_field):
-        arrayNeig = [list_field[i][j-1], list_field[i-1][j], list_field[i+1][j], list_field[i][j+1]]
-        if i == 0:
-            arrayNeig[1] = None
-        if j == 0:
-            arrayNeig[0] = None
-        if  i == len(list_field)-1:
-            arrayNeig[2] = None
-        if  j == len(list_field[0])-1:
-            arrayNeig[3] = None
-        arrayNeig = list(filter(lambda x: x != None, arrayNeig))
+        arrayNeig = []
+        if i > 0:
+            arrayNeig.append(list_field[i-1][j])
+        if j > 0:
+            arrayNeig.append(list_field[i][j-1])
+        if  i < len(list_field)-1:
+            arrayNeig.append(list_field[i+1][j])
+        if  j < len(list_field[0])-1:
+            arrayNeig.append(list_field[i][j+1])
         return arrayNeig
     
     def EndGame(self):
