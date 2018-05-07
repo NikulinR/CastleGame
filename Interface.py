@@ -19,12 +19,13 @@ class mainForm(QMainWindow, FormGame.Ui_MainWindow):
         self.moved = False
         ##############
         self.tmp_array = [] 
+        self.numcho = 0
         ##############
     
     def buttonRun_Clicked(self):
-        self.field = CastleGame.Field(random.randint(10, 20), random.randint(10, 20))
+        size = random.randint(10, 20)
+        self.field = CastleGame.Field(size, size)
         self.field.AddHuman()
-        self.label.setText("Start")
         self.update()
         
     #def mousePressEvent(self, e):
@@ -73,6 +74,7 @@ class mainForm(QMainWindow, FormGame.Ui_MainWindow):
             ##############
             if not self.field.list_field[j][i].choisen:
                 self.field.ChoisenUnit(j, i)   
+                self.numcho=1
             ##############
         self.update()
     
@@ -88,15 +90,20 @@ class mainForm(QMainWindow, FormGame.Ui_MainWindow):
                     if self.field.list_field[j][i].color == self.field.list_field[self.tmp_array[0]][self.tmp_array[1]].color and not self.field.list_field[j][i].choisen:
                         self.field.ChoisenUnit(j, i) 
             ######################
+                        self.numcho+=1
                         self.tmp_array = [j, i]
                         break
             #####################
             self.update()
         
     def mouseReleaseEvent(self, e):
-        self.field.DeleteShape()
-        self.field.EndGame()
-        self.label.setText("AAAAA")
+        if self.numcho > 2:
+            self.field.DeleteShape()
+            self.field.EndGame()
+        else:
+            for line in self.field.list_field:
+                for el in line:
+                    el.choisen = False
         self.labelScore.setText(str(self.field.score))
         self.update()     
         
